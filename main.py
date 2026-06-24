@@ -88,11 +88,16 @@ def main():
     # Chạy system tray
     tray.run_tray(toggle_enable, open_settings, quit_app)
 
-    # Nếu model chưa cài, tự mở settings
-    if not config.config.get("model_installed", False):
+    # Tự động cập nhật trạng thái model_installed dựa trên thực tế đĩa
+    models_ok = engine.check_models_installed_on_disk()
+    config.config["model_installed"] = models_ok
+    config.save_config()
+
+    # Nếu model chưa cài thực tế trên đĩa, tự mở settings
+    if not models_ok:
         root.after(500, open_settings)
     else:
-        print(f"[OK] Sẵn sàng — nhấn {config.config.get('hotkey', 'f2').upper()} để dịch (Offline)")
+        print(f"[OK] Sẵn sàng — nhấn {config.config.get('hotkey', 'f2').upper()} để dịch (Offline)", flush=True)
 
     root.mainloop()
 

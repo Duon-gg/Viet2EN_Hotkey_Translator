@@ -13,10 +13,25 @@ is_loading = False
 last_used_time = time.time()
 unload_timer = None
 
+def check_installed_packages_on_disk():
+    try:
+        import argostranslate.package
+        installed_packages = argostranslate.package.get_installed_packages()
+        has_vi2en = any(p.from_code == "vi" and p.to_code == "en" for p in installed_packages)
+        has_en2vi = any(p.from_code == "en" and p.to_code == "vi" for p in installed_packages)
+        return has_vi2en, has_en2vi
+    except Exception:
+        return False, False
+
+def check_models_installed_on_disk():
+    vi2en, en2vi = check_installed_packages_on_disk()
+    return vi2en and en2vi
+
 def get_status():
+    has_vi2en, has_en2vi = check_installed_packages_on_disk()
     return {
-        "vi2en": translation_obj_vi2en is not None,
-        "en2vi": translation_obj_en2vi is not None,
+        "vi2en": has_vi2en,
+        "en2vi": has_en2vi,
         "is_loading": is_loading
     }
 
