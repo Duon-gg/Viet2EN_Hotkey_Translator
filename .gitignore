@@ -1,0 +1,35 @@
+# Python caching
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Build and packaging
+build/
+dist/
+*.spec.bak
+
+# App runtime logs
+*.log
+
+# Heavy translation models
+models/
+temp_models/
+
+# Local runtime configuration
+config.json
+
+# Project metadata and IDE configurations
+*.egg-info/
+.vscode/
+.idea/
+
+# AI instruction/prompt files
+Cleanup for git.md
+MD request/

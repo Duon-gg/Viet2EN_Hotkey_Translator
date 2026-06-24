@@ -1,0 +1,7 @@
+{
+    "hotkey": "f2",
+    "startup": false,
+    "model_installed": false,
+    "auto_unload_minutes": 30,
+    "restore_delay_seconds": 0.8
+}

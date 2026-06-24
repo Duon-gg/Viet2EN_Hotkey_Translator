@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Test Anti-Copy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .content-box {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        /* 1. CSS chặn bôi đen (chặn select text) */
+        .anti-select {
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10 and IE 11 */
+            user-select: none; /* Standard syntax */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="content-box anti-select" id="protected-content">
+        <h2 style="color: #e74c3c;">🚫 Khu vực bị chặn Copy / Dán</h2>
+        
+        <p>Đoạn văn bản này đã được bảo vệ bằng nhiều lớp:</p>
+        <ul>
+            <li><strong>Lớp 1 (CSS):</strong> Không thể dùng chuột bôi đen văn bản này (thuộc tính <code>user-select: none</code>).</li>
+            <li><strong>Lớp 2 (JS):</strong> Bị chặn click chuột phải (chặn context menu).</li>
+            <li><strong>Lớp 3 (JS):</strong> Bị chặn phím tắt <code>Ctrl + C</code>, <code>Ctrl + V</code>, <code>Ctrl + X</code>.</li>
+        </ul>
+
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+        
+        <h3 style="color: #2980b9;">📝 Khung gõ chữ (Anti-Copy)</h3>
+        <p>Bạn có thể gõ chữ vào khung dưới đây, nhưng thử bôi đen và nhấn Ctrl+C xem có copy được ra ngoài không nhé:</p>
+        <textarea id="test-input" rows="5" style="width: 100%; padding: 10px; font-size: 16px; border: 2px solid #bdc3c7; border-radius: 4px;" placeholder="Gõ thử chữ vào đây rồi tìm cách copy nó đi..."></textarea>
+
+        <p style="margin-top: 20px;">Bạn hãy thử dùng Tool dịch F2 của chúng ta tại đây để xem nó có lấy được text không nhé. Sau đó, thử bật chế độ Reader Mode của trình duyệt hoặc dùng Extension mở khóa copy xem có vượt qua được không.</p>
+    </div>
+
+    <script>
+        // 2. JavaScript chặn chuột phải
+        document.addEventListener('contextmenu', event => {
+            event.preventDefault();
+            alert("Trang web này đã chặn chuột phải!");
+        });
+
+        // 3. JavaScript chặn Ctrl+C, Ctrl+V, Ctrl+X
+        document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey && (event.key === 'c' || event.key === 'C' || 
+                                  event.key === 'v' || event.key === 'V' || 
+                                  event.key === 'x' || event.key === 'X')) {
+                event.preventDefault();
+                alert("Hành động Copy/Paste đã bị chặn bằng JavaScript!");
+            }
+        });
+
+        // 4. JavaScript chặn event 'copy' và 'cut' (kể cả khi copy bằng menu của trình duyệt hoặc chuột phải)
+        document.addEventListener('copy', function(event) {
+            event.preventDefault();
+            console.log("Copy bị chặn.");
+        });
+        document.addEventListener('cut', function(event) {
+            event.preventDefault();
+            console.log("Cut bị chặn.");
+        });
+    </script>
+
+</body>
+</html>

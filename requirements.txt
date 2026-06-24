@@ -1,0 +1,5 @@
+argostranslate>=1.11.0
+keyboard>=0.13.5
+pyperclip>=1.11.0
+pystray>=0.19.5
+Pillow>=9.0.0
