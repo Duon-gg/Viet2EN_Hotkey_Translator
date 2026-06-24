@@ -54,7 +54,7 @@ An offline Vietnamese ↔ English translator that lives in your system tray. Sel
 
 ### Option 1 — Pre-built `.exe`
 
-1. Download `Viet2EN.exe` from the [Releases](<!-- TODO: add GitHub Releases link -->) page
+1. Download `Viet2EN.exe` from the [Releases](https://github.com/Duon-gg/Viet2EN_Hotkey_Translator/releases) page
 2. Place it in its own folder (e.g. `C:\Tools\Viet2EN\`)
 3. Run `Viet2EN.exe` — icon appears in the system tray
 4. On first launch: the settings window opens automatically → click **Download Model** to fetch translation models (~150 MB, internet required for this step only)
@@ -62,7 +62,7 @@ An offline Vietnamese ↔ English translator that lives in your system tray. Sel
 ### Option 2 — Run from source
 
 ```bash
-git clone https://github.com/<your-username>/Viet2EN_Hotkey_Translator.git
+git clone https://github.com/Duon-gg/Viet2EN_Hotkey_Translator.git
 cd Viet2EN_Hotkey_Translator
 
 python -m venv .venv
@@ -130,7 +130,7 @@ Edit `config.json` in the project root (or use the Settings UI):
 
 ## 🤝 Contributing
 
-Found a bug, have an idea, or want to send a pull request — open an [Issue](<!-- TODO: add Issues link -->) on GitHub. All contributions are welcome.
+Found a bug, have an idea, or want to send a pull request — open an [Issue](https://github.com/Duon-gg/Viet2EN_Hotkey_Translator/issues) on GitHub. All contributions are welcome.
 
 ---
 
