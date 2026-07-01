@@ -15,6 +15,7 @@ echo [3/3] Dang dong goi thanh 1 file duy nhat (Onefile Mode)...
     --onefile ^
     --windowed ^
     --name "Viet2EN" ^
+    --icon="assets/icon.ico" ^
     --hidden-import "argostranslate" ^
     --hidden-import "pystray._win32" ^
     --hidden-import "keyboard" ^

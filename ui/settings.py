@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, filedialog
+import os
 from utils import config
 from core import engine
 
@@ -17,7 +18,15 @@ def open_settings_window(root, on_save_callback):
     settings_window.resizable(False, False)
     settings_window.attributes('-topmost', True)
 
+    try:
+        ICON_PATH = os.path.join(os.path.dirname(__file__), "..", "assets", "icon.ico")
+        if os.path.exists(ICON_PATH):
+            settings_window.iconbitmap(ICON_PATH)
+    except Exception as e:
+        print(f"[Settings] Lỗi nạp window icon: {e}")
+
     # Căn giữa màn hình
+
     settings_window.update_idletasks()
     w = settings_window.winfo_width()
     h = settings_window.winfo_height()

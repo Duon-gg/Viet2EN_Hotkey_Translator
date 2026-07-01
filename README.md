@@ -80,6 +80,8 @@ python main.py
 
 On first launch, the settings window opens automatically so you can download translation models. After that, no internet connection is needed.
 
+> **Note:** `models/` is excluded from git by convention for binary assets — this keeps the source code lightweight and flexible for future model swaps, regardless of the current model size (~154 MB).
+
 To run silently (no console window): double-click `run.vbs`.
 
 ---

@@ -1,6 +1,7 @@
 import pystray
 from PIL import Image, ImageDraw
 import threading
+import os
 from utils import config
 from core import engine
 
@@ -8,19 +9,31 @@ tray_icon = None
 is_translating = False
 is_enabled = True
 
+ICON_PATH = os.path.join(os.path.dirname(__file__), "..", "assets", "icon.ico")
+
 def create_image(is_busy=False):
-    width = 64
-    height = 64
-    image = Image.new('RGBA', (width, height), (0, 0, 0, 0))
-    dc = ImageDraw.Draw(image)
-    
-    # Đổi màu nền (Cam đỏ lúc bận, Xanh đen lúc rảnh)
-    bg_color = (230, 81, 0) if is_busy else (44, 62, 80)
-    dc.rounded_rectangle((4, 4, 60, 60), radius=10, fill=bg_color)
-    
-    # Chữ "V>E" màu trắng
-    dc.text((22, 25), "V>E", fill="white")
-    return image
+    try:
+        image = Image.open(ICON_PATH).convert('RGBA')
+        if is_busy:
+            # Draw a subtle orange/red dot indicator in the top right corner
+            draw = ImageDraw.Draw(image)
+            w, h = image.size
+            r = max(4, int(w * 0.15))
+            draw.ellipse((w - 2*r - 2, 2, w - 2, 2*r + 2), fill=(230, 81, 0, 255))
+        return image
+    except Exception as e:
+        width = 64
+        height = 64
+        image = Image.new('RGBA', (width, height), (0, 0, 0, 0))
+        dc = ImageDraw.Draw(image)
+        
+        # Đổi màu nền (Cam đỏ lúc bận, Xanh đen lúc rảnh)
+        bg_color = (230, 81, 0) if is_busy else (44, 62, 80)
+        dc.rounded_rectangle((4, 4, 60, 60), radius=10, fill=bg_color)
+        
+        # Chữ "V>E" màu trắng
+        dc.text((22, 25), "V>E", fill="white")
+        return image
 
 def update_tray_state():
     """Cập nhật icon và tooltip theo trạng thái."""

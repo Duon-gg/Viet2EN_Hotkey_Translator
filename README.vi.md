@@ -78,6 +78,8 @@ python main.py
 
 Lần chạy đầu tiên, cửa sổ cài đặt sẽ tự mở để bạn tải model dịch. Sau khi tải xong, các lần chạy sau không cần internet nữa.
 
+> **Lưu ý:** `models/` được tách khỏi git theo convention chung cho binary assets — giữ source code nhẹ và linh hoạt khi đổi model trong tương lai, không phụ thuộc kích thước hiện tại (~154 MB).
+
 Chạy ẩn (không hiện console): click đúp file `run.vbs`.
 
 ---
