@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Viet2EN Browser Bridge</title>
+  <style>
+    body { max-width: 720px; margin: 48px auto; padding: 0 20px; font: 15px/1.55 system-ui; color: #e2e8f0; background: #07111f; }
+    section { padding: 24px; border: 1px solid #263750; border-radius: 18px; background: #0f1d30; }
+    label { display: block; margin: 15px 0 6px; font-weight: 700; }
+    input[type="text"], input[type="number"] { width: 100%; padding: 11px; border: 1px solid #40516b; border-radius: 9px; color: #fff; background: #07111f; box-sizing: border-box; }
+    .check { display: flex; gap: 9px; align-items: center; font-weight: 500; }
+    button { margin-top: 20px; padding: 11px 18px; border: 0; border-radius: 10px; font-weight: 800; background: #38bdf8; cursor: pointer; }
+    #status { margin-left: 12px; color: #6ee7b7; }
+    code { color: #bae6fd; }
+  </style>
+</head>
+<body>
+  <h1>Viet2EN Browser Bridge</h1>
+  <p>Sao chép token và port từ phần Cài đặt của Viet2EN Desktop. Với file HTML cục bộ, bật “Allow access to file URLs” trong trang chi tiết extension.</p>
+  <section>
+    <label class="check"><input id="enabled" type="checkbox"> Bật kết nối với Viet2EN Desktop</label>
+    <label for="port">Port localhost</label>
+    <input id="port" type="number" min="1024" max="65535">
+    <label for="token">Bridge token</label>
+    <input id="token" type="text" autocomplete="off" spellcheck="false">
+    <label class="check"><input id="unlockAntiCopy" type="checkbox"> Gỡ chặn copy/paste/bôi đen</label>
+    <label class="check"><input id="hoverFallback" type="checkbox"> Nếu không bôi đen được, lấy đoạn dưới con trỏ</label>
+    <label class="check"><input id="replaceReadonly" type="checkbox"> Cho phép thay text chỉ đọc trong DOM của trang</label>
+    <button id="save" type="button">Lưu và kết nối lại</button><span id="status"></span>
+  </section>
+  <script src="options.js"></script>
+</body>
+</html>

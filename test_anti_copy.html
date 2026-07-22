@@ -3,78 +3,438 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang Test Anti-Copy</title>
+    <title>Viet2EN — Anti-copy Test Lab</title>
     <style>
+        :root {
+            color-scheme: dark;
+            --bg: #07111f;
+            --panel: rgba(15, 29, 48, 0.92);
+            --panel-soft: rgba(30, 47, 72, 0.72);
+            --line: rgba(148, 163, 184, 0.22);
+            --text: #e5edf8;
+            --muted: #9fb0c8;
+            --accent: #38bdf8;
+            --accent-2: #818cf8;
+            --danger: #fb7185;
+            --success: #34d399;
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body { min-height: 100%; }
+
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #f5f5f5;
+            margin: 0;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.16), transparent 34rem),
+                radial-gradient(circle at 85% 0%, rgba(129, 140, 248, 0.15), transparent 32rem),
+                var(--bg);
         }
-        .content-box {
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+        button, textarea, input { font: inherit; }
+
+        .shell {
+            width: min(1100px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 28px 0 48px;
         }
-        
-        /* 1. CSS chặn bôi đen (chặn select text) */
-        .anti-select {
-            -webkit-user-select: none; /* Safari */
-            -ms-user-select: none; /* IE 10 and IE 11 */
-            user-select: none; /* Standard syntax */
+
+        .hero, .panel {
+            border: 1px solid var(--line);
+            background: var(--panel);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+            backdrop-filter: blur(14px);
+        }
+
+        .hero {
+            max-width: 760px;
+            margin: 10vh auto 0;
+            padding: clamp(28px, 6vw, 58px);
+            border-radius: 28px;
+            text-align: center;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 999px;
+            color: #bae6fd;
+            background: rgba(56, 189, 248, 0.08);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 22px 0 14px;
+            font-size: clamp(34px, 7vw, 62px);
+            line-height: 1;
+            letter-spacing: -0.055em;
+        }
+
+        h2 { margin: 0; font-size: 21px; }
+        p { color: var(--muted); line-height: 1.7; }
+
+        .launch-button {
+            margin-top: 18px;
+            padding: 14px 22px;
+            border: 0;
+            border-radius: 14px;
+            color: #04111d;
+            background: linear-gradient(135deg, #67e8f9, #818cf8);
+            box-shadow: 0 14px 34px rgba(56, 189, 248, 0.22);
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform 160ms ease, box-shadow 160ms ease;
+        }
+
+        .launch-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 42px rgba(56, 189, 248, 0.3);
+        }
+
+        .hint {
+            margin: 20px auto 0;
+            max-width: 600px;
+            font-size: 13px;
+        }
+
+        .error {
+            display: none;
+            margin-top: 18px;
+            color: #fecdd3;
+            font-weight: 700;
+        }
+
+        #test-lab { display: none; }
+
+        .lab-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 20px;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            color: #a7f3d0;
+            font-size: 14px;
+            font-weight: 750;
+        }
+
+        .status::before {
+            content: "";
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 18px var(--success);
+        }
+
+        .close-button {
+            padding: 9px 13px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            color: var(--text);
+            background: var(--panel-soft);
+            cursor: pointer;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.55fr) minmax(260px, 0.8fr);
+            gap: 18px;
+        }
+
+        .panel { border-radius: 20px; padding: 22px; }
+
+        .protected-zone {
+            -webkit-user-select: none !important;
+            user-select: none !important;
+            -webkit-touch-callout: none !important;
+        }
+
+        .sample {
+            margin-top: 15px;
+            padding: 17px 18px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: rgba(5, 14, 27, 0.68);
+        }
+
+        .sample strong {
+            display: block;
+            margin-bottom: 7px;
+            color: #dbeafe;
+            font-size: 13px;
+            letter-spacing: 0.03em;
+        }
+
+        .sample p { margin: 0; color: #d5dfec; }
+
+        textarea, input {
+            width: 100%;
+            margin-top: 10px;
+            padding: 13px 14px;
+            border: 1px solid rgba(129, 140, 248, 0.35);
+            border-radius: 12px;
+            outline: none;
+            color: var(--text);
+            background: rgba(6, 13, 25, 0.85);
+        }
+
+        textarea { min-height: 105px; resize: vertical; }
+        textarea:focus, input:focus { border-color: var(--accent); }
+
+        .blocked-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            padding: 0;
+            margin: 15px 0 0;
+            list-style: none;
+        }
+
+        .blocked-list li {
+            padding: 9px 10px;
+            border-radius: 10px;
+            color: #fecdd3;
+            background: rgba(244, 63, 94, 0.09);
+            font-size: 13px;
+        }
+
+        .event-log {
+            height: 330px;
+            margin-top: 14px;
+            padding: 12px;
+            overflow: auto;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: #030a14;
+            color: #93c5fd;
+            font: 12px/1.6 Consolas, monospace;
+        }
+
+        .event-log div { border-bottom: 1px solid rgba(148, 163, 184, 0.08); }
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 24px;
+            z-index: 10;
+            min-width: min(430px, calc(100% - 32px));
+            padding: 12px 16px;
+            border: 1px solid rgba(251, 113, 133, 0.45);
+            border-radius: 12px;
+            color: #ffe4e6;
+            background: rgba(76, 5, 25, 0.94);
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.36);
+            text-align: center;
+            transform: translate(-50%, 140%);
+            transition: transform 180ms ease;
+        }
+
+        .toast.visible { transform: translate(-50%, 0); }
+
+        @media (max-width: 780px) {
+            .grid { grid-template-columns: 1fr; }
+            .lab-header { align-items: flex-start; }
         }
     </style>
 </head>
 <body>
+    <main id="launcher" class="shell">
+        <section class="hero">
+            <span class="eyebrow">Viet2EN test laboratory</span>
+            <h1>Anti-copy popup</h1>
+            <p>
+                Mở một cửa sổ web tối giản để thử Viet2EN trên nội dung bị chặn
+                bôi đen, sao chép, dán, cắt, chuột phải và kéo thả.
+            </p>
+            <button id="launch" class="launch-button" type="button">Mở cửa sổ kiểm thử</button>
+            <p class="hint">
+                Trình duyệt quyết định mức giao diện được ẩn. Chrome/Edge thường mở dạng popup
+                chỉ còn thanh tiêu đề; website không được phép tự bật chế độ kiosk toàn màn hình.
+            </p>
+            <div id="popup-error" class="error" role="alert">
+                Popup đã bị trình duyệt chặn. Hãy cho phép popup cho file/trang này rồi thử lại.
+            </div>
+        </section>
+    </main>
 
-    <div class="content-box anti-select" id="protected-content">
-        <h2 style="color: #e74c3c;">🚫 Khu vực bị chặn Copy / Dán</h2>
-        
-        <p>Đoạn văn bản này đã được bảo vệ bằng nhiều lớp:</p>
-        <ul>
-            <li><strong>Lớp 1 (CSS):</strong> Không thể dùng chuột bôi đen văn bản này (thuộc tính <code>user-select: none</code>).</li>
-            <li><strong>Lớp 2 (JS):</strong> Bị chặn click chuột phải (chặn context menu).</li>
-            <li><strong>Lớp 3 (JS):</strong> Bị chặn phím tắt <code>Ctrl + C</code>, <code>Ctrl + V</code>, <code>Ctrl + X</code>.</li>
-        </ul>
+    <main id="test-lab" class="shell protected-zone">
+        <header class="lab-header">
+            <div>
+                <span class="eyebrow">Protected popup</span>
+                <h1 style="font-size: clamp(30px, 5vw, 48px); margin-top: 16px;">Vùng thử bị khóa</h1>
+            </div>
+            <div>
+                <div class="status">Đang chặn thao tác</div>
+                <button class="close-button" type="button" onclick="window.close()">Đóng cửa sổ</button>
+            </div>
+        </header>
 
-        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
-        
-        <h3 style="color: #2980b9;">📝 Khung gõ chữ (Anti-Copy)</h3>
-        <p>Bạn có thể gõ chữ vào khung dưới đây, nhưng thử bôi đen và nhấn Ctrl+C xem có copy được ra ngoài không nhé:</p>
-        <textarea id="test-input" rows="5" style="width: 100%; padding: 10px; font-size: 16px; border: 2px solid #bdc3c7; border-radius: 4px;" placeholder="Gõ thử chữ vào đây rồi tìm cách copy nó đi..."></textarea>
+        <div class="grid">
+            <section class="panel">
+                <h2>Nội dung dùng để thử dịch</h2>
+                <p>Hãy thử bôi đen, nhấn Ctrl+C, Ctrl+V, chuột phải, sau đó thử hotkey Viet2EN.</p>
 
-        <p style="margin-top: 20px;">Bạn hãy thử dùng Tool dịch F2 của chúng ta tại đây để xem nó có lấy được text không nhé. Sau đó, thử bật chế độ Reader Mode của trình duyệt hoặc dùng Extension mở khóa copy xem có vượt qua được không.</p>
-    </div>
+                <article class="sample">
+                    <strong>TIẾNG VIỆT CÓ DẤU</strong>
+                    <p>Trí tuệ nhân tạo có thể hỗ trợ con người dịch tài liệu nhanh hơn, nhưng chất lượng vẫn cần được kiểm tra trong ngữ cảnh thực tế.</p>
+                </article>
+
+                <article class="sample">
+                    <strong>TIẾNG VIỆT KHÔNG DẤU</strong>
+                    <p>Toi dang thu nghiem cong cu dich tren mot trang web khong cho phep sao chep noi dung.</p>
+                </article>
+
+                <article class="sample">
+                    <strong>ENGLISH</strong>
+                    <p>This protected page prevents ordinary selection and clipboard shortcuts, so the translator must use another text extraction method.</p>
+                </article>
+
+                <article class="sample">
+                    <strong>Ô NHẬP BỊ CHẶN COPY/PASTE</strong>
+                    <input type="text" value="Bạn có thể gõ ở đây nhưng không thể sao chép hoặc dán bằng phím tắt.">
+                    <textarea>Đây là vùng nhập liệu dùng để kiểm tra việc thay thế bản dịch. Trang sẽ chặn copy, paste, cut, select-all và menu chuột phải.</textarea>
+                </article>
+            </section>
+
+            <aside class="panel">
+                <h2>Các lớp bảo vệ</h2>
+                <ul class="blocked-list">
+                    <li>CSS user-select</li>
+                    <li>Selection API</li>
+                    <li>Ctrl/Cmd + C</li>
+                    <li>Ctrl/Cmd + V</li>
+                    <li>Ctrl/Cmd + X</li>
+                    <li>Ctrl/Cmd + A</li>
+                    <li>Chuột phải</li>
+                    <li>Kéo thả</li>
+                    <li>Copy event</li>
+                    <li>Paste event</li>
+                </ul>
+
+                <h2 style="margin-top: 24px;">Nhật ký chặn</h2>
+                <div id="event-log" class="event-log" aria-live="polite"></div>
+            </aside>
+        </div>
+    </main>
+
+    <div id="toast" class="toast" role="status">Thao tác đã bị trang kiểm thử chặn.</div>
 
     <script>
-        // 2. JavaScript chặn chuột phải
-        document.addEventListener('contextmenu', event => {
-            event.preventDefault();
-            alert("Trang web này đã chặn chuột phải!");
-        });
+        (() => {
+            "use strict";
 
-        // 3. JavaScript chặn Ctrl+C, Ctrl+V, Ctrl+X
-        document.addEventListener('keydown', function(event) {
-            if (event.ctrlKey && (event.key === 'c' || event.key === 'C' || 
-                                  event.key === 'v' || event.key === 'V' || 
-                                  event.key === 'x' || event.key === 'X')) {
-                event.preventDefault();
-                alert("Hành động Copy/Paste đã bị chặn bằng JavaScript!");
+            const params = new URLSearchParams(window.location.search);
+            const popupMode = params.get("popup") === "1";
+            const launcher = document.getElementById("launcher");
+            const testLab = document.getElementById("test-lab");
+            const launchButton = document.getElementById("launch");
+            const popupError = document.getElementById("popup-error");
+            const toast = document.getElementById("toast");
+            const eventLog = document.getElementById("event-log");
+            let toastTimer;
+
+            if (!popupMode) {
+                launchButton.addEventListener("click", () => {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set("popup", "1");
+
+                    const width = Math.min(1160, screen.availWidth - 80);
+                    const height = Math.min(820, screen.availHeight - 80);
+                    const left = Math.max(0, Math.round((screen.availWidth - width) / 2));
+                    const top = Math.max(0, Math.round((screen.availHeight - height) / 2));
+                    const features = [
+                        "popup=yes",
+                        `width=${width}`,
+                        `height=${height}`,
+                        `left=${left}`,
+                        `top=${top}`,
+                        "toolbar=no",
+                        "location=no",
+                        "menubar=no",
+                        "status=no",
+                        "resizable=yes",
+                        "scrollbars=yes"
+                    ].join(",");
+
+                    const child = window.open(url.toString(), "Viet2ENAntiCopyLab", features);
+                    if (!child) {
+                        popupError.style.display = "block";
+                        return;
+                    }
+
+                    popupError.style.display = "none";
+                    child.focus();
+                });
+                return;
             }
-        });
 
-        // 4. JavaScript chặn event 'copy' và 'cut' (kể cả khi copy bằng menu của trình duyệt hoặc chuột phải)
-        document.addEventListener('copy', function(event) {
-            event.preventDefault();
-            console.log("Copy bị chặn.");
-        });
-        document.addEventListener('cut', function(event) {
-            event.preventDefault();
-            console.log("Cut bị chặn.");
-        });
+            launcher.style.display = "none";
+            testLab.style.display = "block";
+            document.title = "Viet2EN — Protected Popup";
+
+            const showBlocked = (eventName) => {
+                const time = new Date().toLocaleTimeString("vi-VN");
+                const row = document.createElement("div");
+                row.textContent = `[${time}] Đã chặn: ${eventName}`;
+                eventLog.prepend(row);
+
+                while (eventLog.children.length > 35) {
+                    eventLog.lastElementChild.remove();
+                }
+
+                toast.textContent = `Đã chặn thao tác: ${eventName}`;
+                toast.classList.add("visible");
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => toast.classList.remove("visible"), 1300);
+            };
+
+            const blockEvent = (event) => {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                showBlocked(event.type);
+                return false;
+            };
+
+            ["copy", "cut", "paste", "contextmenu", "selectstart", "dragstart", "drop"]
+                .forEach((name) => document.addEventListener(name, blockEvent, true));
+
+            document.addEventListener("keydown", (event) => {
+                const key = event.key.toLowerCase();
+                const primaryModifier = event.ctrlKey || event.metaKey;
+                const blockedPrimaryKeys = new Set(["a", "c", "v", "x", "s", "p", "u"]);
+                const blockedDevtools = primaryModifier && event.shiftKey && ["c", "i", "j", "k"].includes(key);
+
+                if ((primaryModifier && blockedPrimaryKeys.has(key)) || blockedDevtools || event.key === "F12") {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+                    showBlocked(`phím ${event.ctrlKey ? "Ctrl+" : event.metaKey ? "Cmd+" : ""}${event.shiftKey ? "Shift+" : ""}${event.key}`);
+                }
+            }, true);
+
+            document.addEventListener("selectionchange", () => {
+                const selection = window.getSelection();
+                if (selection && !selection.isCollapsed) {
+                    selection.removeAllRanges();
+                    showBlocked("bôi đen văn bản");
+                }
+            });
+
+            eventLog.innerHTML = "<div>[READY] Anti-copy test lab đã sẵn sàng.</div>";
+        })();
     </script>
-
 </body>
 </html>

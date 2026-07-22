@@ -1,87 +1,116 @@
+"""System tray UI."""
+
+from __future__ import annotations
+
+import logging
+import threading
+from collections.abc import Callable
+from pathlib import Path
+
 import pystray
 from PIL import Image, ImageDraw
-import threading
-import os
-from utils import config
-from core import engine
 
-tray_icon = None
+from core import browser_bridge, engine
+from utils import config
+
+LOGGER = logging.getLogger("viet2en.tray")
+tray_icon: pystray.Icon | None = None
 is_translating = False
 is_enabled = True
+_state_lock = threading.RLock()
+ICON_PATH = Path(__file__).resolve().parent.parent / "assets" / "icon-v2.ico"
 
-ICON_PATH = os.path.join(os.path.dirname(__file__), "..", "assets", "icon.ico")
 
-def create_image(is_busy=False):
+def create_image(is_busy: bool = False) -> Image.Image:
     try:
-        image = Image.open(ICON_PATH).convert('RGBA')
-        if is_busy:
-            # Draw a subtle orange/red dot indicator in the top right corner
-            draw = ImageDraw.Draw(image)
-            w, h = image.size
-            r = max(4, int(w * 0.15))
-            draw.ellipse((w - 2*r - 2, 2, w - 2, 2*r + 2), fill=(230, 81, 0, 255))
-        return image
-    except Exception as e:
-        width = 64
-        height = 64
-        image = Image.new('RGBA', (width, height), (0, 0, 0, 0))
-        dc = ImageDraw.Draw(image)
-        
-        # Đổi màu nền (Cam đỏ lúc bận, Xanh đen lúc rảnh)
-        bg_color = (230, 81, 0) if is_busy else (44, 62, 80)
-        dc.rounded_rectangle((4, 4, 60, 60), radius=10, fill=bg_color)
-        
-        # Chữ "V>E" màu trắng
-        dc.text((22, 25), "V>E", fill="white")
-        return image
+        image = Image.open(ICON_PATH).convert("RGBA")
+    except Exception:
+        image = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
+        draw = ImageDraw.Draw(image)
+        draw.rounded_rectangle((4, 4, 60, 60), radius=10, fill=(44, 62, 80))
+        draw.text((18, 24), "V>E", fill="white")
+    if is_busy:
+        draw = ImageDraw.Draw(image)
+        width, _height = image.size
+        radius = max(4, int(width * 0.15))
+        draw.ellipse((width - 2 * radius - 2, 2, width - 2, 2 * radius + 2), fill=(230, 81, 0, 255))
+    return image
 
-def update_tray_state():
-    """Cập nhật icon và tooltip theo trạng thái."""
-    if not tray_icon:
+
+def update_tray_state() -> None:
+    with _state_lock:
+        icon = tray_icon
+        enabled = is_enabled
+        translating = is_translating
+    if icon is None:
         return
-        
-    hk = config.config.get("hotkey", "f2").upper()
-    eng_status = engine.get_status()
-    
-    if eng_status["is_loading"]:
-        model_status = "Đang tải..."
-    elif eng_status["vi2en"] and eng_status["en2vi"]:
-        model_status = "OK (Đã nạp)"
-    else:
-        model_status = "Ngủ/Thiếu Model"
-        
-    status_text = "Đang Tắt" if not is_enabled else "Bật"
-    tray_icon.title = f"Viet2EN [{status_text}] | Phím: {hk} | Model: {model_status}"
-    tray_icon.icon = create_image(is_translating)
+    try:
+        status = engine.get_status()
+        state_labels = {
+            "unloaded": "ngủ",
+            "loading": "đang nạp",
+            "ready": "sẵn sàng",
+            "translating": "đang dịch",
+            "installing": "đang cài",
+            "error": "lỗi",
+        }
+        bridge_status = "browser ✓" if browser_bridge.BRIDGE.connected else "browser –"
+        enabled_label = "bật" if enabled else "tắt"
+        hotkey = str(config.config.get("hotkey", "f2")).upper()
+        icon.title = (
+            f"Viet2EN [{enabled_label}] • {hotkey} • "
+            f"model {state_labels.get(str(status['state']), status['state'])} • {bridge_status}"
+        )
+        icon.icon = create_image(translating)
+    except Exception:
+        LOGGER.exception("Unable to update tray state")
 
-def notify(title, message):
+
+def notify(title: str, message: str) -> None:
     if tray_icon:
-        tray_icon.notify(message, title)
+        try:
+            tray_icon.notify(message, title)
+        except Exception:
+            LOGGER.exception("Unable to show tray notification")
 
-def set_translating_state(state):
+
+def set_translating_state(state: bool) -> None:
     global is_translating
-    is_translating = state
+    with _state_lock:
+        is_translating = state
     update_tray_state()
 
-def run_tray(toggle_callback, settings_callback, quit_callback):
-    global tray_icon
-    
-    def on_toggle(icon, item):
+
+def run_tray(
+    toggle_callback: Callable[[bool], None],
+    settings_callback: Callable[..., None],
+    ocr_callback: Callable[..., None],
+    quit_callback: Callable[..., None],
+) -> pystray.Icon:
+    global tray_icon, is_enabled
+
+    def on_toggle(_icon, _item) -> None:
         global is_enabled
-        is_enabled = not is_enabled
-        toggle_callback(is_enabled)
+        with _state_lock:
+            is_enabled = not is_enabled
+            enabled = is_enabled
+        toggle_callback(enabled)
         update_tray_state()
-        
-    menu = pystray.Menu(
-        pystray.MenuItem("Bật dịch", on_toggle, checked=lambda item: is_enabled),
-        pystray.MenuItem("Cài đặt", settings_callback),
-        pystray.MenuItem("Thoát", quit_callback)
-    )
 
-    image = create_image(False)
-    hk = config.config.get("hotkey", "f2").upper()
-    tray_icon = pystray.Icon("Viet2EN", image, f"Viet2EN | Phím: {hk} | Model: Đang kiểm tra...", menu)
-    
+    menu = pystray.Menu(
+        pystray.MenuItem("Bật dịch", on_toggle, checked=lambda _item: is_enabled),
+        pystray.MenuItem("Dịch vùng màn hình (OCR)", ocr_callback),
+        pystray.MenuItem("Cài đặt", settings_callback),
+        pystray.Menu.SEPARATOR,
+        pystray.MenuItem("Thoát", quit_callback),
+    )
+    hotkey = str(config.config.get("hotkey", "f2")).upper()
+    tray_icon = pystray.Icon(
+        "Viet2EN",
+        create_image(False),
+        f"Viet2EN • {hotkey} • đang khởi động",
+        menu,
+    )
+    threading.Thread(target=tray_icon.run, name="viet2en-tray", daemon=True).start()
     update_tray_state()
-    threading.Thread(target=tray_icon.run, daemon=True).start()
     return tray_icon

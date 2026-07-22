@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Install dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Dependency consistency
+        run: python -m pip check
+      - name: Ruff
+        run: python -m ruff check main.py core ui utils scripts tests
+      - name: Mypy
+        run: python -m mypy main.py core ui utils scripts
+      - name: Pytest
+        run: python -m pytest -q
+      - name: Extension syntax
+        shell: pwsh
+        run: |
+          node --check browser_extension/service-worker.js
+          node --check browser_extension/content.js
+          node --check browser_extension/options.js
+          node --check browser_extension/popup.js
+      - name: PyInstaller smoke build
+        run: python -m PyInstaller --noconfirm Viet2EN.spec

@@ -1,5 +1,9 @@
-argostranslate>=1.11.0
-keyboard>=0.13.5
-pyperclip>=1.11.0
-pystray>=0.19.5
-Pillow>=9.0.0
+argostranslate==1.11.0
+keyboard==0.13.5
+pyperclip==1.11.0
+pystray==0.19.5
+Pillow==12.2.0
+websockets==16.0
+pywin32==312
+uiautomation==2.0.29
+rapidocr-onnxruntime==1.4.4

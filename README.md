@@ -1,154 +1,86 @@
-# Viet2EN Hotkey Translator
+# Viet2EN Hotkey Translator 2.0
 
-**🌐 English | [Tiếng Việt](README.vi.md)**
+**English | [Tiếng Việt](README.vi.md)**
 
-**Translate right where you're typing — select, press F2, done.**
+An offline-first Vietnamese ↔ English Windows translator. Select text, press a hotkey, and Viet2EN translates it in place when the target can be edited; otherwise it silently copies the translation to the clipboard. Version 2 adds an anti-copy browser extension, Windows UI Automation, safe clipboard transactions, and offline OCR.
 
-![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-green)
-![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?logo=windows&logoColor=white)
+## Highlights
 
-An offline Vietnamese ↔ English translator that lives in your system tray. Select any text in any app, press `F2`, and the translation replaces it in-place. No browser tabs, no copy-pasting into Google Translate. Powered by [Argos Translate](https://github.com/argosopentech/argos-translate) — your data never leaves your machine.
+- Extraction pipeline: **Browser DOM → UI Automation → Clipboard → OCR**.
+- No placeholder/Backspace workflow; content changes only after translation succeeds.
+- Foreground-window and focused-control guards prevent pasting into the wrong app; fallback results are copied to the clipboard without a result popup.
+- Thread-safe Argos engine with background preload, automatic unload, CPU/CUDA and INT8 options.
+- Improved accentless Vietnamese detection and optional common-word diacritic restoration.
+- User glossary plus protection for URLs, email, code, and placeholders.
+- Manifest V3 Chrome/Edge extension for popup windows, frames, and anti-copy pages.
+- RapidOCR/ONNX Runtime screen-region translation.
+- LocalAppData config, rotating logs, automated tests, linting, typing, CI, and PyInstaller packaging.
 
----
+## Source installation
 
-
-
-## 📑 Table of Contents
-
-- [Features](#-features)
-- [System Requirements](#-system-requirements)
-- [Installation](#-installation)
-- [Usage](#-usage)
-- [Advanced Configuration](#-advanced-configuration)
-- [Troubleshooting](#-troubleshooting)
-- [Contributing](#-contributing)
-- [License & Credits](#-license--credits)
-
----
-
-## ✨ Features
-
-- ⚡ **Instant hotkey translation** — select text in any app, press `F2`, and the result overwrites it on the spot. No browser needed.
-- 🔌 **Fully offline** — translation models run locally. No data sent anywhere, no internet required after initial model download.
-- 🧠 **Auto language detection** — Vietnamese text gets translated to English, English text gets translated to Vietnamese. No manual switching.
-- 💤 **Smart RAM management** — models auto-unload from memory after 30 minutes of inactivity (configurable), reload on demand.
-- 🚀 **Near-instant startup** — the app doesn't load models on launch, only on first translation (Lazy Load).
-- 🔒 **Single instance guard** — launching the app twice silently exits the duplicate. No stacking.
-- 📋 **Clipboard preservation** — your original clipboard content is automatically restored after translation.
-
----
-
-## 💻 System Requirements
-
-| Component | Requirement |
-|---|---|
-| OS | Windows 10 / 11 |
-| Python | 3.10+ (if running from source) |
-| Disk space | ~150 MB for both translation models (VI↔EN) |
-| RAM | ~500 MB when models are loaded |
-
----
-
-## 📦 Installation
-
-### Option 1 — Pre-built Releases
-
-* **Option A: Offline Bundle (Recommended)**
-  1. Download **`Viet2EN_Offline_Bundle.zip`** from the [Releases](https://github.com/Duon-gg/Viet2EN_Hotkey_Translator/releases) page.
-  2. Extract the ZIP archive to its own folder (e.g. `C:\Tools\Viet2EN\`).
-  3. Run `Viet2EN.exe` — it will immediately start offline without requiring any internet connection, as the translation models are pre-bundled in the `models/` directory.
-
-* **Option B: Lightweight `.exe`**
-  1. Download `Viet2EN.exe` from the [Releases](https://github.com/Duon-gg/Viet2EN_Hotkey_Translator/releases) page.
-  2. Place it in its own folder.
-  3. Run `Viet2EN.exe`. On first launch, the settings window will open automatically → click **Download Model** to fetch the translation models (~150 MB, internet required for this download step only).
-
-### Option 2 — Run from source
-
-```bash
+```bat
 git clone https://github.com/Duon-gg/Viet2EN_Hotkey_Translator.git
 cd Viet2EN_Hotkey_Translator
-
-python -m venv .venv
+py -3.12 -m venv .venv
 .venv\Scripts\activate
-pip install -r requirements.txt
-
-copy config.example.json config.json
+python -m pip install -r requirements.txt
 python main.py
 ```
 
-On first launch, the settings window opens automatically so you can download translation models. After that, no internet connection is needed.
+Install both Argos VI↔EN models from the Settings window on first launch.
 
-> **Note:** `models/` is excluded from git by convention for binary assets — this keeps the source code lightweight and flexible for future model swaps, regardless of the current model size (~154 MB).
+## Hotkeys
 
-To run silently (no console window): double-click `run.vbs`.
+- `F2`: automatic direction.
+- `Ctrl+F2`: force Vietnamese → English.
+- `Shift+F2`: force English → Vietnamese.
+- Tray → **Translate screen region (OCR)** for images, canvas, and scanned PDFs. OCR results are copied to the clipboard.
 
----
+The base hotkey is configurable.
 
-## 🎯 Usage
+## Browser extension
 
-1. Select (highlight) the text you want to translate — in any app (browser, Word, Notepad, IDE...)
-2. Press **`F2`**
-3. The text briefly shows `...` while processing, then gets replaced with the translation
+1. Open `chrome://extensions` or `edge://extensions`.
+2. Enable Developer mode.
+3. Load the `browser_extension` directory as an unpacked extension.
+4. Copy the bridge token and port from Viet2EN Settings into the extension Options page.
+5. Enable **Allow access to file URLs** to test `test_anti_copy.html`.
 
-No tab switching, no app to open. Your original clipboard is automatically restored after pasting.
+The extension runs at `document_start` in matching frames and connects only to an authenticated WebSocket bound to `127.0.0.1`.
 
-### Hotkeys & Options
+## Quality checks
 
-| Option | Default | Change via |
-|---|---|---|
-| Translate key | `F2` | Settings (right-click tray icon → **Settings**) |
-| Available keys | `F2` through `F8` | Dropdown in Settings window |
-| Enable / disable | Enabled | Right-click tray icon → **Enable translation** |
+```bat
+python -m pytest -q
+python -m ruff check main.py core ui utils scripts tests
+python -m mypy main.py core ui utils scripts
+```
 
----
+Real-browser anti-copy E2E test:
 
-## ⚙ Advanced Configuration
+```bat
+python -m playwright install chromium
+python scripts\test_anti_copy_browser.py
+```
 
-Edit `config.json` in the project root (or use the Settings UI):
+## Build
 
-| Field | Description | Default |
-|---|---|---|
-| `hotkey` | Translation hotkey. Accepts `f2` through `f8` | `"f2"` |
-| `startup` | Auto-start with Windows | `false` |
-| `auto_unload_minutes` | Minutes of inactivity before unloading models from RAM | `30` |
-| `restore_delay_seconds` | Seconds to wait before restoring original clipboard after pasting the result | `0.8` |
+```bat
+build.bat
+build.bat --offline
+```
 
-> No `config.json`? The app creates one with defaults. Or copy from `config.example.json`.
+The default build produces `dist\Viet2EN\`, including the extension and runtime dependency license texts; `--offline` also copies installed translation models.
 
----
+## Data and limitations
 
-## 🔧 Troubleshooting
+- Argos and RapidOCR run locally; translated text isn't written to logs.
+- Configuration and logs live under `%LOCALAPPDATA%\Viet2EN`.
+- Translation quality is limited by the installed Argos models.
+- When in-place replacement is unsafe or unsupported, Viet2EN copies the translation to the clipboard instead of showing a result window.
+- Browser privileged pages, separate profiles, unsupported WebViews, DRM, and canvas may require OCR or may remain inaccessible.
+- The tool processes content the user is already authorized to view; it doesn't bypass authentication, encryption, or DRM.
 
-**Pressing F2 does nothing:**
-→ Check if the tray icon is visible. If not, the app isn't running or has crashed — open `viet2en.log` for error details.
+## License
 
-**Translation doesn't work in certain windows (Task Manager, elevated Command Prompt...):**
-→ Windows security limitation: a User-level process cannot send keystrokes to an Administrator-level process. Fix: close Viet2EN, right-click → **Run as Administrator**.
-
-**First F2 press is slow (~2-5 seconds):**
-→ Expected behavior. Translation models use Lazy Loading — they only load into RAM on the first translation. Subsequent translations are much faster until the model auto-unloads after idle timeout.
-
-**Online model download fails:**
-→ Open Settings → use **Install from file (.argosmodel)** to install manually. Download `.argosmodel` files for `vi→en` and `en→vi` from [Argos Translate packages](https://www.argosopentech.com/argospm/index/).
-
----
-
-## 🤝 Contributing
-
-Found a bug, have an idea, or want to send a pull request — open an [Issue](https://github.com/Duon-gg/Viet2EN_Hotkey_Translator/issues) on GitHub. All contributions are welcome.
-
----
-
-## 📄 License & Credits
-
-Released under the [MIT License](LICENSE).
-
-Built on top of these open-source projects:
-
-- [Argos Translate](https://github.com/argosopentech/argos-translate) — offline translation engine
-- [CTranslate2](https://github.com/OpenNMT/CTranslate2) — inference runtime for translation models
-- [pystray](https://github.com/moses-palmer/pystray) — system tray icon
-- [keyboard](https://github.com/boppreh/keyboard) — system-wide hotkey capture
-- [pyperclip](https://github.com/asweigart/pyperclip) — clipboard interaction
+Viet2EN's own source is MIT. The runtime dependency set includes MiniSBD under AGPL-3.0, so review distribution obligations before publishing a bundled binary. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for details and OPUS-MT model attribution.

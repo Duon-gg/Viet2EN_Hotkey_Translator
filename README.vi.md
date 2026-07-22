@@ -1,152 +1,143 @@
-# Viet2EN Hotkey Translator
+# Viet2EN Hotkey Translator 2.0
 
-**🌐 [English](README.md) | Tiếng Việt**
+**[English](README.md) | Tiếng Việt**
 
-**Dịch ngay tại chỗ bạn đang gõ — bôi đen, nhấn F2, xong.**
+Công cụ dịch Việt ↔ Anh cho Windows: bôi đen nội dung, nhấn hotkey và nhận bản dịch ngay trong ứng dụng đang dùng khi ô đích có thể chỉnh sửa; nếu không an toàn để thay trực tiếp, bản dịch được copy âm thầm vào clipboard. Viet2EN ưu tiên xử lý offline, đồng thời có extension để đọc những website chặn copy/bôi đen và OCR cho ảnh, canvas hoặc PDF scan.
 
-![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-green)
-![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?logo=windows&logoColor=white)
+## Điểm mới trong 2.0
 
----
+- Pipeline lấy nội dung: **Browser DOM → Windows UI Automation → Clipboard → OCR**.
+- Không còn dán `...` rồi Backspace; chỉ thay nội dung sau khi dịch thành công.
+- Kiểm tra cửa sổ/control vẫn đúng trước khi paste; nếu người dùng đổi vị trí hoặc không thể thay trực tiếp, kết quả chỉ được copy vào clipboard.
+- Clipboard transaction giữ nhiều format và không ghi đè clipboard mới của người dùng.
+- Engine thread-safe, preload nền, ba chế độ hiệu năng và tùy chọn CPU/CUDA/INT8.
+- Nhận diện tiếng Việt không dấu tốt hơn và có bước phục hồi dấu từ vựng phổ biến.
+- Glossary bảo vệ thuật ngữ, URL, email, code và placeholder.
+- Chrome/Edge Manifest V3 extension xử lý popup, iframe và nhiều cơ chế anti-copy.
+- Windows UI Automation `TextPattern` fallback.
+- RapidOCR/ONNX Runtime chạy offline, kèm giao diện chọn vùng màn hình.
+- Config/log trong `%LOCALAPPDATA%\Viet2EN`, atomic config write và rotating log.
+- Pytest, Ruff, mypy, GitHub Actions và PyInstaller onedir build.
 
+## Yêu cầu
 
+- Windows 10/11.
+- Python 3.12 nếu chạy từ source.
+- Khoảng 154 MB cho hai model Argos; OCR và Python runtime làm bản đóng gói lớn hơn.
+- Khoảng 500 MB RAM khi cả hai model đang nạp.
 
-## 📑 Mục lục
+## Chạy từ source
 
-- [Tính năng](#-tính-năng)
-- [Yêu cầu hệ thống](#-yêu-cầu-hệ-thống)
-- [Cài đặt](#-cài-đặt)
-- [Cách sử dụng](#-cách-sử-dụng)
-- [Cấu hình nâng cao](#-cấu-hình-nâng-cao)
-- [Troubleshooting](#-troubleshooting)
-- [Contributing](#-contributing)
-- [License & Credits](#-license--credits)
-
----
-
-## ✨ Tính năng
-
-- ⚡ **Dịch tức thì bằng phím tắt** — bôi đen text ở bất kỳ app nào, nhấn `F2`, kết quả dán đè ngay tại chỗ. Không cần mở trình duyệt, không cần copy-paste qua Google Translate.
-- 🔌 **100% offline** — model dịch chạy cục bộ trên máy bạn. Không gửi dữ liệu đi đâu, không cần internet sau khi cài model.
-- 🧠 **Tự nhận diện chiều dịch** — gõ tiếng Việt thì dịch sang Anh, gõ tiếng Anh thì dịch sang Việt. Không cần chọn tay.
-- 💤 **Tự giải phóng RAM khi rảnh** — model tự unload khỏi bộ nhớ nếu bạn không dịch gì trong 30 phút (cấu hình được), tự load lại lần tiếp theo cần.
-- 🚀 **Khởi động gần như ngay lập tức** — app không load model khi mở, chỉ load lần đầu bạn nhấn dịch (Lazy Load).
-- 🔒 **Chống mở trùng** — chạy app lần hai sẽ tự thoát, không tạo bản sao.
-- 📋 **Bảo toàn clipboard** — sau khi dịch xong, clipboard cũ của bạn được tự động khôi phục.
-
----
-
-## 💻 Yêu cầu hệ thống
-
-| Thành phần | Yêu cầu |
-|---|---|
-| Hệ điều hành | Windows 10 / 11 |
-| Python | 3.10+ (nếu chạy từ source) |
-| Dung lượng đĩa | ~150 MB cho 2 model dịch (VI↔EN) |
-| RAM | ~500 MB khi model đang load |
-
----
-
-## 📦 Cài đặt
-
-### Cách 1 — Chạy bản đóng gói sẵn
-
-* **Lựa chọn A: Bản Offline đóng gói sẵn (Khuyên dùng)**
-  1. Tải file **`Viet2EN_Offline_Bundle.zip`** từ trang [Releases](https://github.com/Duon-gg/Viet2EN_Hotkey_Translator/releases).
-  2. Giải nén vào thư mục riêng (ví dụ `C:\Tools\Viet2EN\`).
-  3. Chạy `Viet2EN.exe` — ứng dụng sẽ hoạt động offline ngay lập tức mà không cần kết nối internet, do các mô hình dịch đã được tích hợp sẵn trong thư mục `models/`.
-
-* **Lựa chọn B: Bản `.exe` gọn nhẹ**
-  1. Tải file `Viet2EN.exe` từ trang [Releases](https://github.com/Duon-gg/Viet2EN_Hotkey_Translator/releases).
-  2. Đặt vào thư mục riêng.
-  3. Chạy `Viet2EN.exe`. Lần đầu chạy, cửa sổ cài đặt sẽ tự mở → click **Tải mô hình (Download Model)** để tải model dịch (~150 MB, cần kết nối internet cho bước tải này).
-
-### Cách 2 — Chạy từ source
-
-```bash
+```bat
 git clone https://github.com/Duon-gg/Viet2EN_Hotkey_Translator.git
 cd Viet2EN_Hotkey_Translator
-
-python -m venv .venv
+py -3.12 -m venv .venv
 .venv\Scripts\activate
-pip install -r requirements.txt
-
-copy config.example.json config.json
+python -m pip install -r requirements.txt
 python main.py
 ```
 
-Lần chạy đầu tiên, cửa sổ cài đặt sẽ tự mở để bạn tải model dịch. Sau khi tải xong, các lần chạy sau không cần internet nữa.
+Lần đầu chạy, Settings tự mở nếu thiếu model. Chọn **Tải đủ model VI↔EN** hoặc cài từng file `.argosmodel`.
 
-> **Lưu ý:** `models/` được tách khỏi git theo convention chung cho binary assets — giữ source code nhẹ và linh hoạt khi đổi model trong tương lai, không phụ thuộc kích thước hiện tại (~154 MB).
+## Cách dùng
 
-Chạy ẩn (không hiện console): click đúp file `run.vbs`.
+- `F2`: tự nhận diện chiều dịch.
+- `Ctrl+F2`: buộc Việt → Anh.
+- `Shift+F2`: buộc Anh → Việt.
+- Tray → **Dịch vùng màn hình (OCR)**: kéo chuột quanh ảnh/canvas/PDF scan, kết quả được copy vào clipboard.
+- Tray → **Cài đặt**: hiệu năng, model, browser bridge, OCR và glossary.
 
----
+Hotkey gốc có thể đổi trong Settings. Nếu hotkey đã là một tổ hợp, hai hotkey ép chiều sẽ không được đăng ký tự động.
 
-## 🎯 Cách sử dụng
+## Cài extension chống anti-copy
 
-1. Bôi đen đoạn văn bản cần dịch — ở bất kỳ app nào (trình duyệt, Word, Notepad, IDE...)
-2. Nhấn **`F2`**
-3. Text hiện `...` trong lúc xử lý, rồi tự thay bằng bản dịch
+1. Mở `chrome://extensions` hoặc `edge://extensions`.
+2. Bật **Developer mode**.
+3. Chọn **Load unpacked** và trỏ tới thư mục `browser_extension`.
+4. Trong Settings của Viet2EN Desktop, copy **Bridge token** và ghi lại port.
+5. Mở Options của extension, nhập đúng token/port rồi lưu.
+6. Khi thử `test_anti_copy.html`, mở Details của extension và bật **Allow access to file URLs**.
 
-Không cần chuyển tab, không cần mở app nào khác. Clipboard cũ được tự động khôi phục sau khi dán.
+Extension chạy từ `document_start`, tự hoạt động trong popup không có toolbar và mọi iframe phù hợp. Kết nối chỉ bind `127.0.0.1`, yêu cầu token và từ chối Origin không phải extension.
 
-### Phím tắt & tùy chọn
+## Chế độ hiệu năng
 
-| Tùy chọn | Mặc định | Thay đổi qua |
-|---|---|---|
-| Phím dịch | `F2` | Cài đặt (chuột phải icon tray → **Cài đặt**) |
-| Phím khả dụng | `F2` đến `F8` | Dropdown trong cửa sổ Cài đặt |
-| Bật / tắt dịch | Bật | Menu chuột phải icon tray → **Bật dịch** |
+- **Hiệu năng:** giữ model trong RAM.
+- **Cân bằng:** preload nền và unload sau thời gian cấu hình.
+- **Tiết kiệm RAM:** chỉ nạp model khi cần.
 
----
+`compute_type=auto` để CTranslate2 tự chọn. Có thể thử `int8` trên CPU và `device=cuda` trên máy NVIDIA tương thích; nên benchmark trước khi dùng mặc định.
 
-## ⚙ Cấu hình nâng cao
+## Glossary
 
-Sửa file `config.json` ở thư mục gốc (hoặc dùng giao diện Cài đặt):
+Mỗi dòng trong tab Glossary:
 
-| Field | Mô tả | Mặc định |
-|---|---|---|
-| `hotkey` | Phím tắt kích hoạt dịch. Nhận giá trị `f2` đến `f8` | `"f2"` |
-| `startup` | Tự chạy khi khởi động Windows | `false` |
-| `auto_unload_minutes` | Số phút không dùng trước khi tự giải phóng model khỏi RAM | `30` |
-| `restore_delay_seconds` | Thời gian chờ (giây) trước khi khôi phục lại clipboard gốc sau khi dán kết quả | `0.8` |
+```text
+hotkey = phím tắt
+clipboard = bảng tạm
+deployment = triển khai
+```
 
-> Không có `config.json`? App tự tạo với giá trị mặc định. Hoặc copy từ `config.example.json`.
+Viet2EN cũng bảo vệ URL, email, code inline và placeholder như `{name}`, `{{value}}`, `%s`.
 
----
+## Dữ liệu và quyền riêng tư
 
-## 🔧 Troubleshooting
+- Argos và RapidOCR chạy cục bộ.
+- Browser bridge chỉ lắng nghe trên `127.0.0.1`.
+- Log không ghi nội dung được dịch.
+- Extension cần quyền trang để đọc DOM; có thể tắt hoàn toàn trong Settings hoặc Options.
+- Công cụ chỉ xử lý nội dung người dùng đã có quyền xem; không vượt đăng nhập, mã hóa hoặc DRM.
 
-**Nhấn F2 nhưng không có phản hồi gì:**
-→ Kiểm tra icon tray có hiện không. Nếu không thấy, app chưa chạy hoặc đã crash — mở file `viet2en.log` để xem chi tiết lỗi.
+## Cấu hình và log
 
-**Dịch không hoạt động trên một số cửa sổ (Task Manager, Command Prompt chạy Admin...):**
-→ Giới hạn bảo mật của Windows: process chạy quyền User không thể gửi phím tắt vào process chạy quyền Administrator. Cách xử lý: tắt Viet2EN, chuột phải → **Run as Administrator** rồi chạy lại.
+```text
+%LOCALAPPDATA%\Viet2EN\config.json
+%LOCALAPPDATA%\Viet2EN\logs\viet2en.log
+```
 
-**Lần đầu nhấn F2 bị chậm (~2-5 giây):**
-→ Bình thường. Model dịch dùng Lazy Load — chỉ nạp vào RAM lần đầu bạn dịch. Các lần sau nhanh hơn nhiều, cho tới khi model tự unload do không sử dụng.
+`config.json` cũ cạnh ứng dụng được tự động migrate. Model vẫn nằm trong thư mục `models` cạnh source/EXE để hỗ trợ offline bundle.
 
-**Tải model online bị lỗi:**
-→ Mở Cài đặt → dùng nút **Cài từ file (.argosmodel)** để cài thủ công. Tải file `.argosmodel` cho cặp `vi→en` và `en→vi` từ [Argos Translate packages](https://www.argosopentech.com/argospm/index/).
+## Kiểm thử
 
----
+```bat
+python -m pytest -q
+python -m ruff check main.py core ui utils scripts tests
+python -m mypy main.py core ui utils scripts
+node --check browser_extension\service-worker.js
+node --check browser_extension\content.js
+```
 
-## 🤝 Contributing
+Kiểm thử end-to-end trên Chromium thật với trang anti-copy, extension, bridge và model dịch:
 
-Phát hiện bug, có ý tưởng cải thiện, hoặc muốn gửi pull request — mở [Issue](https://github.com/Duon-gg/Viet2EN_Hotkey_Translator/issues) trên GitHub. Mọi đóng góp đều được hoan nghênh.
+```bat
+python -m playwright install chromium
+python scripts\test_anti_copy_browser.py
+```
 
----
+`test_anti_copy.html` mở popup tối giản và chặn bôi đen, copy, paste, cut, chuột phải, kéo thả cùng các phím tắt phổ biến.
 
-## 📄 License & Credits
+## Build
 
-Phát hành theo giấy phép [MIT](LICENSE).
+```bat
+build.bat
+```
 
-Dự án được xây dựng trên nền các thư viện mã nguồn mở:
+Tạo bản onedir tại `dist\Viet2EN\`. Để copy model vào bundle:
 
-- [Argos Translate](https://github.com/argosopentech/argos-translate) — engine dịch offline
-- [CTranslate2](https://github.com/OpenNMT/CTranslate2) — runtime inference cho model dịch
-- [pystray](https://github.com/moses-palmer/pystray) — system tray icon
-- [keyboard](https://github.com/boppreh/keyboard) — bắt phím tắt toàn hệ thống
-- [pyperclip](https://github.com/asweigart/pyperclip) — tương tác clipboard
+```bat
+build.bat --offline
+```
+
+Onedir được chọn để giảm thời gian khởi động và để thư mục extension có thể được load trực tiếp. Build chạy `pip check`, Ruff, mypy và pytest trước PyInstaller, sau đó chép extension cùng toàn bộ license/notice của dependency runtime.
+
+## Giới hạn
+
+- Chất lượng phụ thuộc model Argos; câu không dấu hoặc rất ngắn vẫn có thể mơ hồ.
+- Extension không chạy trên một số trang đặc quyền của trình duyệt, profile khác hoặc WebView không cài extension.
+- UI Automation phụ thuộc ứng dụng có expose `TextPattern`.
+- OCR phù hợp với nội dung nhìn thấy; kết quả dịch OCR được copy vào clipboard và không tự thay text ở vị trí không xác định.
+- Một số format clipboard dùng native handle không thể snapshot hoàn hảo; Viet2EN bảo toàn các format dữ liệu phổ biến và tránh restore khi clipboard đã thay đổi.
+
+## License
+
+Phần mã nguồn riêng của Viet2EN phát hành theo MIT. Bộ dependency runtime có MiniSBD dùng AGPL-3.0, vì vậy cần xem nghĩa vụ phân phối trước khi công bố bản binary đã đóng gói. Xem [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) để biết chi tiết và attribution model OPUS-MT/CC BY 4.0.

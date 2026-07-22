@@ -1,7 +1,21 @@
 {
     "hotkey": "f2",
+    "direction": "auto",
     "startup": false,
     "model_installed": false,
+    "performance_mode": "balanced",
     "auto_unload_minutes": 30,
-    "restore_delay_seconds": 0.8
+    "restore_delay_seconds": 0.35,
+    "clipboard_timeout_seconds": 1.2,
+    "compute_type": "auto",
+    "device": "cpu",
+    "browser_bridge_enabled": true,
+    "browser_bridge_port": 8765,
+    "browser_bridge_token": "generated-automatically-on-first-run",
+    "browser_extract_timeout_seconds": 0.45,
+    "uiautomation_enabled": true,
+    "ocr_enabled": true,
+    "ocr_min_confidence": 0.45,
+    "normalize_accentless_vietnamese": true,
+    "glossary": {}
 }
