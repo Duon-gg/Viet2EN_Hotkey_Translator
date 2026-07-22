@@ -1,1 +1,1 @@
-"""Viet2EN utility modules."""
+"""Vitra utility modules."""

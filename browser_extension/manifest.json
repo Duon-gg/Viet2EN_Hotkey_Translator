@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Viet2EN Browser Bridge",
+  "name": "Vitra Bridge",
   "version": "1.0.0",
-  "description": "Đọc vùng chọn, gỡ khóa anti-copy và kết nối an toàn với Viet2EN Desktop.",
+  "description": "Đọc vùng chọn, gỡ khóa anti-copy và kết nối an toàn với Vitra Desktop.",
   "minimum_chrome_version": "116",
   "permissions": ["storage", "tabs", "webNavigation"],
   "host_permissions": [
@@ -33,7 +33,7 @@
     }
   ],
   "action": {
-    "default_title": "Viet2EN Browser Bridge",
+    "default_title": "Vitra Bridge",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",

@@ -14,4 +14,4 @@ def test_runtime_privacy_filter_blocks_verbose_translation_logs() -> None:
     assert not privacy_filter.filter(record("argostranslate.utils", logging.INFO))
     assert not privacy_filter.filter(record("ctranslate2", logging.DEBUG))
     assert privacy_filter.filter(record("argostranslate.utils", logging.WARNING))
-    assert privacy_filter.filter(record("viet2en.engine", logging.INFO))
+    assert privacy_filter.filter(record("vitra.engine", logging.INFO))

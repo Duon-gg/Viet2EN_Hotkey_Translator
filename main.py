@@ -1,4 +1,4 @@
-"""Viet2EN desktop application entry point."""
+"""Vitra desktop application entry point."""
 
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ from utils.logging_setup import configure_logging  # noqa: E402
 LOGGER = configure_logging()
 
 
-class Viet2ENApplication:
+class VitraApplication:
     def __init__(self) -> None:
         self.root: tk.Tk | None = None
         self._mutex_handle = 0
@@ -32,7 +32,7 @@ class Viet2ENApplication:
 
     def acquire_single_instance(self) -> bool:
         kernel32 = ctypes.windll.kernel32
-        self._mutex_handle = int(kernel32.CreateMutexW(None, False, "Viet2EN_Translator_Mutex_Lock"))
+        self._mutex_handle = int(kernel32.CreateMutexW(None, False, "Vitra_Translator_Mutex_Lock"))
         return kernel32.GetLastError() != 183
 
     def apply_hotkeys(self) -> None:
@@ -47,7 +47,7 @@ class Viet2ENApplication:
                 keyboard.add_hotkey(f"shift+{hotkey}", lambda: self.translate_action("en_vi"), suppress=True)
         except Exception as exc:
             LOGGER.exception("Unable to register hotkey %s", hotkey)
-            tray.notify("Viet2EN", f"Hotkey không hợp lệ: {exc}")
+            tray.notify("Vitra", f"Hotkey không hợp lệ: {exc}")
 
     def toggle_enable(self, _enabled: bool) -> None:
         self.apply_hotkeys()
@@ -84,7 +84,7 @@ class Viet2ENApplication:
             return False
         translated = self._translate_preserving_whitespace(selection.text, direction)
         if not translated or translated.strip() == selection.text.strip():
-            tray.notify("Viet2EN", "Bản dịch không thay đổi")
+            tray.notify("Vitra", "Bản dịch không thay đổi")
             return True
         if not browser_bridge.BRIDGE.apply_translation(selection, translated):
             clipboard.safe_copy(translated)
@@ -99,7 +99,7 @@ class Viet2ENApplication:
         focus = clipboard.FocusContext.capture()
         translated = self._translate_preserving_whitespace(selection.text, direction)
         if not translated or translated.strip() == selection.text.strip():
-            tray.notify("Viet2EN", "Bản dịch không thay đổi")
+            tray.notify("Vitra", "Bản dịch không thay đổi")
             return True
 
         clipboard_selection = clipboard.ClipboardSelection(selection.text, focus)
@@ -138,19 +138,19 @@ class Viet2ENApplication:
                 success = self._translation_pipeline(direction)
             except Exception as exc:
                 LOGGER.exception("Translation pipeline failed")
-                tray.notify("Viet2EN", f"Lỗi dịch: {str(exc)[:90]}")
+                tray.notify("Vitra", f"Lỗi dịch: {str(exc)[:90]}")
             finally:
                 tray.set_translating_state(False)
                 self._translation_lock.release()
             if not success and config.config.get("ocr_enabled", True):
                 self.request_ocr()
 
-        threading.Thread(target=worker, name="viet2en-translation", daemon=True).start()
+        threading.Thread(target=worker, name="vitra-translation", daemon=True).start()
 
     def request_ocr(self, *_args) -> None:
         root = self.root
         if not root or not config.config.get("ocr_enabled", True):
-            tray.notify("Viet2EN OCR", "OCR đang tắt trong Settings")
+            tray.notify("Vitra OCR", "OCR đang tắt trong Settings")
             return
         root.after(0, lambda: ocr_selector.select_screen_region(root, self._run_ocr_region))
 
@@ -160,21 +160,21 @@ class Viet2ENApplication:
                 image = ImageGrab.grab(bbox=bbox, all_screens=True)
                 result = ocr.SERVICE.extract(image)
                 if result is None:
-                    tray.notify("Viet2EN OCR", "Không nhận diện được văn bản trong vùng đã chọn")
+                    tray.notify("Vitra OCR", "Không nhận diện được văn bản trong vùng đã chọn")
                     return
                 translated = self._translate_preserving_whitespace(result.text, None)
                 clipboard.safe_copy(translated)
             except Exception as exc:
                 LOGGER.exception("OCR flow failed")
-                tray.notify("Viet2EN OCR", f"Lỗi OCR: {str(exc)[:90]}")
+                tray.notify("Vitra OCR", f"Lỗi OCR: {str(exc)[:90]}")
 
-        threading.Thread(target=worker, name="viet2en-ocr", daemon=True).start()
+        threading.Thread(target=worker, name="vitra-ocr", daemon=True).start()
 
     def quit(self, *_args) -> None:
         if self._quitting:
             return
         self._quitting = True
-        LOGGER.info("Viet2EN is shutting down")
+        LOGGER.info("Vitra is shutting down")
         try:
             keyboard.unhook_all()
             browser_bridge.BRIDGE.stop()
@@ -197,7 +197,7 @@ class Viet2ENApplication:
         if not self.acquire_single_instance():
             return 0
 
-        LOGGER.info("Starting Viet2EN Translator")
+        LOGGER.info("Starting Vitra")
         self.root = tk.Tk()
         self.root.withdraw()
         self.root.protocol("WM_DELETE_WINDOW", self.quit)
@@ -213,7 +213,7 @@ class Viet2ENApplication:
             config.save_config()
         if models_ok:
             engine.preload_async()
-            tray.notify("Viet2EN", f"Sẵn sàng — nhấn {str(config.config['hotkey']).upper()} để dịch")
+            tray.notify("Vitra", f"Sẵn sàng — nhấn {str(config.config['hotkey']).upper()} để dịch")
         else:
             self.root.after(500, self.open_settings)
 
@@ -225,7 +225,7 @@ class Viet2ENApplication:
 
 
 def main() -> int:
-    app = Viet2ENApplication()
+    app = VitraApplication()
     return app.run()
 
 
@@ -233,7 +233,7 @@ def _log_unhandled(exc_type, exc_value, exc_traceback) -> None:
     if issubclass(exc_type, KeyboardInterrupt):
         sys.__excepthook__(exc_type, exc_value, exc_traceback)
         return
-    logging.getLogger("viet2en").critical(
+    logging.getLogger("vitra").critical(
         "Unhandled exception",
         exc_info=(exc_type, exc_value, exc_traceback),
     )

@@ -13,7 +13,7 @@ from PIL import Image, ImageDraw
 from core import browser_bridge, engine
 from utils import config
 
-LOGGER = logging.getLogger("viet2en.tray")
+LOGGER = logging.getLogger("vitra.tray")
 tray_icon: pystray.Icon | None = None
 is_translating = False
 is_enabled = True
@@ -58,7 +58,7 @@ def update_tray_state() -> None:
         enabled_label = "bật" if enabled else "tắt"
         hotkey = str(config.config.get("hotkey", "f2")).upper()
         icon.title = (
-            f"Viet2EN [{enabled_label}] • {hotkey} • "
+            f"Vitra [{enabled_label}] • {hotkey} • "
             f"model {state_labels.get(str(status['state']), status['state'])} • {bridge_status}"
         )
         icon.icon = create_image(translating)
@@ -106,11 +106,11 @@ def run_tray(
     )
     hotkey = str(config.config.get("hotkey", "f2")).upper()
     tray_icon = pystray.Icon(
-        "Viet2EN",
+        "Vitra",
         create_image(False),
-        f"Viet2EN • {hotkey} • đang khởi động",
+        f"Vitra • {hotkey} • đang khởi động",
         menu,
     )
-    threading.Thread(target=tray_icon.run, name="viet2en-tray", daemon=True).start()
+    threading.Thread(target=tray_icon.run, name="vitra-tray", daemon=True).start()
     update_tray_state()
     return tray_icon

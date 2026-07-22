@@ -18,7 +18,7 @@ import pyperclip
 
 from utils import config
 
-LOGGER = logging.getLogger("viet2en.clipboard")
+LOGGER = logging.getLogger("vitra.clipboard")
 
 try:
     import win32clipboard
@@ -248,7 +248,7 @@ def execute_translation_cycle(
     selection = acquire_selected_text()
     if selection is None:
         on_status_notify(
-            "Viet2EN",
+            "Vitra",
             "Không lấy được vùng chọn bằng clipboard; đang cần UI Automation, extension hoặc OCR.",
         )
         return False
@@ -258,17 +258,17 @@ def execute_translation_cycle(
         translated = engine_translate_func(text_to_translate)
     except Exception as exc:
         LOGGER.exception("Translation failed")
-        on_status_notify("Viet2EN", f"Lỗi dịch: {str(exc)[:90]}")
+        on_status_notify("Vitra", f"Lỗi dịch: {str(exc)[:90]}")
         return False
 
     if not translated or translated.strip() == text_to_translate:
-        on_status_notify("Viet2EN", "Kết quả không thay đổi; nội dung có thể không thuộc VI/EN.")
+        on_status_notify("Vitra", "Kết quả không thay đổi; nội dung có thể không thuộc VI/EN.")
         return False
 
     final_text = leading + translated.strip() + trailing
     if not paste_translation(selection, final_text):
         on_status_notify(
-            "Viet2EN",
+            "Vitra",
             "Bạn đã đổi vị trí nhập. Bản dịch được giữ trong clipboard thay vì dán nhầm.",
         )
         return False

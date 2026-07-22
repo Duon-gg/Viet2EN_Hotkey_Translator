@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Viet2EN — Anti-copy Test Lab</title>
+    <title>Vitra — Anti-copy Test Lab</title>
     <style>
         :root {
             color-scheme: dark;
@@ -254,10 +254,10 @@
 <body>
     <main id="launcher" class="shell">
         <section class="hero">
-            <span class="eyebrow">Viet2EN test laboratory</span>
+            <span class="eyebrow">Vitra test laboratory</span>
             <h1>Anti-copy popup</h1>
             <p>
-                Mở một cửa sổ web tối giản để thử Viet2EN trên nội dung bị chặn
+                Mở một cửa sổ web tối giản để thử Vitra trên nội dung bị chặn
                 bôi đen, sao chép, dán, cắt, chuột phải và kéo thả.
             </p>
             <button id="launch" class="launch-button" type="button">Mở cửa sổ kiểm thử</button>
@@ -286,7 +286,7 @@
         <div class="grid">
             <section class="panel">
                 <h2>Nội dung dùng để thử dịch</h2>
-                <p>Hãy thử bôi đen, nhấn Ctrl+C, Ctrl+V, chuột phải, sau đó thử hotkey Viet2EN.</p>
+                <p>Hãy thử bôi đen, nhấn Ctrl+C, Ctrl+V, chuột phải, sau đó thử hotkey Vitra.</p>
 
                 <article class="sample">
                     <strong>TIẾNG VIỆT CÓ DẤU</strong>
@@ -370,7 +370,7 @@
                         "scrollbars=yes"
                     ].join(",");
 
-                    const child = window.open(url.toString(), "Viet2ENAntiCopyLab", features);
+                    const child = window.open(url.toString(), "VitraAntiCopyLab", features);
                     if (!child) {
                         popupError.style.display = "block";
                         return;
@@ -384,7 +384,7 @@
 
             launcher.style.display = "none";
             testLab.style.display = "block";
-            document.title = "Viet2EN — Protected Popup";
+            document.title = "Vitra — Protected Popup";
 
             const showBlocked = (eventName) => {
                 const time = new Date().toLocaleTimeString("vi-VN");

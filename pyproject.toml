@@ -1,7 +1,7 @@
 [project]
-name = "viet2en-hotkey-translator"
+name = "vitra-hotkey-translator"
 version = "2.0.0"
-description = "Offline Vietnamese-English system-wide translator for Windows"
+description = "Vitra offline Vietnamese-English translator for Windows"
 requires-python = ">=3.12,<3.13"
 license = { text = "MIT" }
 dependencies = [

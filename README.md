@@ -1,8 +1,8 @@
-# Viet2EN Hotkey Translator 2.0
+# Vitra 2.0
 
 **English | [Tiếng Việt](README.vi.md)**
 
-An offline-first Vietnamese ↔ English Windows translator. Select text, press a hotkey, and Viet2EN translates it in place when the target can be edited; otherwise it silently copies the translation to the clipboard. Version 2 adds an anti-copy browser extension, Windows UI Automation, safe clipboard transactions, and offline OCR.
+An offline-first Vietnamese ↔ English Windows translator. Select text, press a hotkey, and Vitra translates it in place when the target can be edited; otherwise it silently copies the translation to the clipboard. Version 2 adds an anti-copy browser extension, Windows UI Automation, safe clipboard transactions, and offline OCR.
 
 ## Highlights
 
@@ -43,7 +43,7 @@ The base hotkey is configurable.
 1. Open `chrome://extensions` or `edge://extensions`.
 2. Enable Developer mode.
 3. Load the `browser_extension` directory as an unpacked extension.
-4. Copy the bridge token and port from Viet2EN Settings into the extension Options page.
+4. Copy the bridge token and port from Vitra Settings into the extension Options page.
 5. Enable **Allow access to file URLs** to test `test_anti_copy.html`.
 
 The extension runs at `document_start` in matching frames and connects only to an authenticated WebSocket bound to `127.0.0.1`.
@@ -70,17 +70,17 @@ build.bat
 build.bat --offline
 ```
 
-The default build produces `dist\Viet2EN\`, including the extension and runtime dependency license texts; `--offline` also copies installed translation models.
+The default build produces `dist\Vitra\`, including the extension and runtime dependency license texts; `--offline` also copies installed translation models.
 
 ## Data and limitations
 
 - Argos and RapidOCR run locally; translated text isn't written to logs.
-- Configuration and logs live under `%LOCALAPPDATA%\Viet2EN`.
+- Configuration and logs live under `%LOCALAPPDATA%\Vitra`.
 - Translation quality is limited by the installed Argos models.
-- When in-place replacement is unsafe or unsupported, Viet2EN copies the translation to the clipboard instead of showing a result window.
+- When in-place replacement is unsafe or unsupported, Vitra copies the translation to the clipboard instead of showing a result window.
 - Browser privileged pages, separate profiles, unsupported WebViews, DRM, and canvas may require OCR or may remain inaccessible.
 - The tool processes content the user is already authorized to view; it doesn't bypass authentication, encryption, or DRM.
 
 ## License
 
-Viet2EN's own source is MIT. The runtime dependency set includes MiniSBD under AGPL-3.0, so review distribution obligations before publishing a bundled binary. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for details and OPUS-MT model attribution.
+Vitra's own source is MIT. The runtime dependency set includes MiniSBD under AGPL-3.0, so review distribution obligations before publishing a bundled binary. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for details and OPUS-MT model attribution.

@@ -13,7 +13,7 @@ from urllib.parse import parse_qs, urlparse
 
 from utils import config
 
-LOGGER = logging.getLogger("viet2en.browser_bridge")
+LOGGER = logging.getLogger("vitra.browser_bridge")
 
 
 @dataclass
@@ -61,7 +61,7 @@ class BrowserBridge:
             self._started.clear()
             self._thread = threading.Thread(
                 target=self._serve,
-                name="viet2en-browser-bridge",
+                name="vitra-browser-bridge",
                 daemon=True,
             )
             self._thread.start()
@@ -111,14 +111,14 @@ class BrowserBridge:
 
     def _handle_connection(self, websocket: Any) -> None:
         if not self._authorized(websocket):
-            websocket.close(code=1008, reason="Unauthorized Viet2EN bridge client")
+            websocket.close(code=1008, reason="Unauthorized Vitra bridge client")
             return
 
         with self._lock:
             self._connections.add(websocket)
         LOGGER.info("Browser extension connected")
         try:
-            websocket.send(json.dumps({"type": "hello", "app": "Viet2EN", "version": 1}))
+            websocket.send(json.dumps({"type": "hello", "app": "Vitra", "version": 1}))
             for raw_message in websocket:
                 self._handle_message(websocket, raw_message)
         except Exception:
@@ -240,7 +240,7 @@ class BrowserBridge:
             self._connections.clear()
         for connection in connections:
             try:
-                connection.close(code=1001, reason="Viet2EN is shutting down")
+                connection.close(code=1001, reason="Vitra is shutting down")
             except Exception:
                 pass
 

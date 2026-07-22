@@ -9,7 +9,7 @@ from typing import Any
 
 from utils import config
 
-LOGGER = logging.getLogger("viet2en.ocr")
+LOGGER = logging.getLogger("vitra.ocr")
 
 
 @dataclass(frozen=True)

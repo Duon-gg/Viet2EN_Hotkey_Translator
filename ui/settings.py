@@ -22,7 +22,7 @@ def open_settings_window(root: tk.Misc, on_save_callback: Callable[[], None]) ->
         return
 
     settings_window = tk.Toplevel(root)
-    settings_window.title("Cài đặt Viet2EN Translator")
+    settings_window.title("Cài đặt Vitra")
     settings_window.geometry("660x690")
     settings_window.minsize(620, 620)
     settings_window.attributes("-topmost", True)
@@ -183,7 +183,7 @@ def open_settings_window(root: tk.Misc, on_save_callback: Callable[[], None]) ->
             set_model_busy(False)
             refresh_model_status()
             if not success:
-                messagebox.showerror("Viet2EN", message, parent=settings_window)
+                messagebox.showerror("Vitra", message, parent=settings_window)
 
         ui_call(finish)
 

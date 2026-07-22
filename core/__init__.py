@@ -1,1 +1,1 @@
-"""Core Viet2EN services."""
+"""Core Vitra services."""

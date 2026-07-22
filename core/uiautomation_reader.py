@@ -8,7 +8,7 @@ from typing import Any
 
 from utils import config
 
-LOGGER = logging.getLogger("viet2en.uiautomation")
+LOGGER = logging.getLogger("vitra.uiautomation")
 
 
 @dataclass(frozen=True)

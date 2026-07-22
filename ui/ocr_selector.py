@@ -12,7 +12,7 @@ def select_screen_region(root: tk.Misc, on_selected: Callable[[tuple[int, int, i
     overlay.attributes("-topmost", True)
     overlay.attributes("-alpha", 0.28)
     overlay.configure(bg="black")
-    overlay.title("Viet2EN OCR")
+    overlay.title("Vitra OCR")
 
     canvas = tk.Canvas(overlay, bg="#08111f", highlightthickness=0, cursor="crosshair")
     canvas.pack(fill=tk.BOTH, expand=True)

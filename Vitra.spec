@@ -72,7 +72,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name="Viet2EN",
+    name="Vitra",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -90,5 +90,5 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name="Viet2EN",
+    name="Vitra",
 )

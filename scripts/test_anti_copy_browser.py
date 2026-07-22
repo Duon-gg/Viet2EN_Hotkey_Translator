@@ -56,7 +56,7 @@ def open_protected_popup(context: BrowserContext, launcher_url: str) -> Page:
     popup.wait_for_load_state("domcontentloaded")
     popup.bring_to_front()
     assert "popup=1" in popup.url
-    assert popup.title() == "Viet2EN — Protected Popup"
+    assert popup.title() == "Vitra — Protected Popup"
     return popup
 
 
@@ -123,7 +123,7 @@ def extension_checks(
     bridge: BrowserBridge,
 ) -> dict[str, Any]:
     popup = open_protected_popup(context, launcher_url)
-    popup.wait_for_function("document.documentElement.classList.contains('viet2en-unlock')")
+    popup.wait_for_function("document.documentElement.classList.contains('vitra-unlock')")
     paragraph = popup.locator(".sample p").filter(has_text="This protected page")
     paragraph.select_text()
     popup.wait_for_timeout(150)
@@ -212,7 +212,7 @@ def main() -> int:
             finally:
                 browser.close()
 
-            with TemporaryDirectory(prefix="viet2en-playwright-") as profile:
+            with TemporaryDirectory(prefix="vitra-playwright-") as profile:
                 context = playwright.chromium.launch_persistent_context(
                     profile,
                     headless=False,

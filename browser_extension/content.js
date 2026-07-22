@@ -30,9 +30,9 @@
     .forEach((name) => document.addEventListener(name, bypassPageBlocker, true));
 
   const style = document.createElement("style");
-  style.dataset.viet2enUnlock = "true";
+  style.dataset.vitraUnlock = "true";
   style.textContent = `
-    html.viet2en-unlock *, html.viet2en-unlock *::before, html.viet2en-unlock *::after {
+    html.vitra-unlock *, html.vitra-unlock *::before, html.vitra-unlock *::after {
       -webkit-user-select: text !important;
       user-select: text !important;
       -webkit-touch-callout: default !important;
@@ -42,7 +42,7 @@
   function applySettings(nextSettings) {
     settings = { ...settings, ...nextSettings };
     document.documentElement?.classList.toggle(
-      "viet2en-unlock",
+      "vitra-unlock",
       Boolean(settings.enabled && settings.unlockAntiCopy)
     );
     if (!style.isConnected) (document.head || document.documentElement)?.appendChild(style);

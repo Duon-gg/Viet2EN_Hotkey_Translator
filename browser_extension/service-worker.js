@@ -42,7 +42,7 @@ async function connect() {
         if (message.type === "extract") await handleExtract(message);
         if (message.type === "apply") await handleApply(message);
       } catch (error) {
-        console.warn("Viet2EN bridge message failed", error);
+        console.warn("Vitra bridge message failed", error);
       }
     });
     socket.addEventListener("close", () => {

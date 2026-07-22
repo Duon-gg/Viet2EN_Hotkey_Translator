@@ -14,13 +14,13 @@ VSVersionInfo(
       StringTable(
         u'040904B0',
         [
-          StringStruct(u'CompanyName', u'Viet2EN Contributors'),
-          StringStruct(u'FileDescription', u'Viet2EN Offline Hotkey Translator'),
+          StringStruct(u'CompanyName', u'Vitra Contributors'),
+          StringStruct(u'FileDescription', u'Vitra'),
           StringStruct(u'FileVersion', u'2.0.0'),
-          StringStruct(u'InternalName', u'Viet2EN'),
+          StringStruct(u'InternalName', u'Vitra'),
           StringStruct(u'LegalCopyright', u'MIT License'),
-          StringStruct(u'OriginalFilename', u'Viet2EN.exe'),
-          StringStruct(u'ProductName', u'Viet2EN Translator'),
+          StringStruct(u'OriginalFilename', u'Vitra.exe'),
+          StringStruct(u'ProductName', u'Vitra'),
           StringStruct(u'ProductVersion', u'2.0.0')
         ]
       )

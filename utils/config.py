@@ -12,7 +12,10 @@ import winreg
 from pathlib import Path
 from typing import Any
 
-APP_NAME = "Viet2EN"
+APP_NAME = "Vitra"
+LEGACY_APP_NAME = "Viet2EN"
+STARTUP_APP_NAME = "Vitra_Translator"
+LEGACY_STARTUP_APP_NAME = "Viet2EN_Translator"
 
 
 def get_app_dir() -> Path:
@@ -25,15 +28,24 @@ def get_data_dir() -> Path:
     base = os.environ.get("LOCALAPPDATA")
     if base:
         return Path(base) / APP_NAME
-    return get_app_dir() / ".viet2en-data"
+    return get_app_dir() / ".vitra-data"
+
+
+def get_legacy_data_dir() -> Path | None:
+    base = os.environ.get("LOCALAPPDATA")
+    if base:
+        return Path(base) / LEGACY_APP_NAME
+    return None
 
 
 APP_DIR = get_app_dir()
 DATA_DIR = get_data_dir()
+LEGACY_DATA_DIR = get_legacy_data_dir()
 MODEL_DIR = APP_DIR / "models"
 CONFIG_FILE = DATA_DIR / "config.json"
 LEGACY_CONFIG_FILE = APP_DIR / "config.json"
-LOG_FILE = DATA_DIR / "logs" / "viet2en.log"
+LEGACY_DATA_CONFIG_FILE = LEGACY_DATA_DIR / "config.json" if LEGACY_DATA_DIR is not None else None
+LOG_FILE = DATA_DIR / "logs" / "vitra.log"
 
 DEFAULT_CONFIG: dict[str, Any] = {
     "hotkey": "f2",
@@ -124,6 +136,8 @@ def load_config() -> dict[str, Any]:
     source: Path | None = None
     if CONFIG_FILE.exists():
         source = CONFIG_FILE
+    elif LEGACY_DATA_CONFIG_FILE and LEGACY_DATA_CONFIG_FILE.exists():
+        source = LEGACY_DATA_CONFIG_FILE
     elif LEGACY_CONFIG_FILE.exists():
         source = LEGACY_CONFIG_FILE
 
@@ -181,7 +195,6 @@ def configure_runtime_environment() -> None:
 
 def set_startup(enable: bool) -> bool:
     key_path = r"Software\Microsoft\Windows\CurrentVersion\Run"
-    app_name = "Viet2EN_Translator"
     try:
         with winreg.OpenKey(
             winreg.HKEY_CURRENT_USER,
@@ -194,12 +207,17 @@ def set_startup(enable: bool) -> bool:
                     command = f'"{sys.executable}"'
                 else:
                     command = f'wscript.exe "{APP_DIR / "run.vbs"}"'
-                winreg.SetValueEx(registry_key, app_name, 0, winreg.REG_SZ, command)
-            else:
+                winreg.SetValueEx(registry_key, STARTUP_APP_NAME, 0, winreg.REG_SZ, command)
                 try:
-                    winreg.DeleteValue(registry_key, app_name)
+                    winreg.DeleteValue(registry_key, LEGACY_STARTUP_APP_NAME)
                 except FileNotFoundError:
                     pass
+            else:
+                for app_name in (STARTUP_APP_NAME, LEGACY_STARTUP_APP_NAME):
+                    try:
+                        winreg.DeleteValue(registry_key, app_name)
+                    except FileNotFoundError:
+                        pass
         return True
     except OSError as exc:
         print(f"[Config] Lỗi thiết lập khởi động cùng Windows: {exc}")

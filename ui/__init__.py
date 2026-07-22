@@ -1,1 +1,1 @@
-"""Viet2EN desktop user interface."""
+"""Vitra desktop user interface."""

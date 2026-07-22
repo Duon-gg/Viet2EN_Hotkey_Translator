@@ -18,7 +18,7 @@ from typing import Any, Protocol
 
 from utils import config
 
-LOGGER = logging.getLogger("viet2en.engine")
+LOGGER = logging.getLogger("vitra.engine")
 
 
 class EngineState(StrEnum):
@@ -196,13 +196,13 @@ class LightweightSentencizer:
 
 
 def _prepare_lightweight_argos_imports() -> None:
-    """Avoid importing large optional SBD stacks that Viet2EN doesn't execute."""
+    """Avoid importing large optional SBD stacks that Vitra doesn't execute."""
     if "stanza" not in sys.modules:
         stanza_stub = types.ModuleType("stanza")
 
         class UnsupportedPipeline:
             def __init__(self, *_args, **_kwargs) -> None:
-                raise RuntimeError("Viet2EN uses its lightweight sentence splitter")
+                raise RuntimeError("Vitra uses its lightweight sentence splitter")
 
         stanza_stub.Pipeline = UnsupportedPipeline  # type: ignore[attr-defined]
         sys.modules["stanza"] = stanza_stub
@@ -245,7 +245,7 @@ class TranslationService:
         self._shutdown_event = threading.Event()
         self._unload_thread = threading.Thread(
             target=self._auto_unload_loop,
-            name="viet2en-model-unloader",
+            name="vitra-model-unloader",
             daemon=True,
         )
         self._unload_thread.start()
@@ -360,7 +360,7 @@ class TranslationService:
                 except Exception:
                     break
 
-        threading.Thread(target=preload, name="viet2en-model-preloader", daemon=True).start()
+        threading.Thread(target=preload, name="vitra-model-preloader", daemon=True).start()
 
     @staticmethod
     def detect_direction(text: str) -> Direction:
@@ -571,7 +571,7 @@ class TranslationService:
                 if config.config.get("performance_mode") != "low_memory":
                     self.preload_async()
 
-        threading.Thread(target=worker, name="viet2en-model-download", daemon=True).start()
+        threading.Thread(target=worker, name="vitra-model-download", daemon=True).start()
 
     def install_local(
         self,
@@ -600,7 +600,7 @@ class TranslationService:
             finally:
                 self._set_installing(False)
 
-        threading.Thread(target=worker, name="viet2en-model-install", daemon=True).start()
+        threading.Thread(target=worker, name="vitra-model-install", daemon=True).start()
 
     def shutdown(self) -> None:
         self._shutdown_event.set()

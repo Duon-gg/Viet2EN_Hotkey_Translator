@@ -42,4 +42,4 @@ def configure_logging() -> logging.Logger:
         ):
             existing_handler.addFilter(RuntimePrivacyFilter())
 
-    return logging.getLogger("viet2en")
+    return logging.getLogger("vitra")
