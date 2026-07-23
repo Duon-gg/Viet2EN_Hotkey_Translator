@@ -19,8 +19,8 @@ An offline-first Vietnamese ↔ English Windows translator. Select text, press a
 ## Source installation
 
 ```bat
-git clone https://github.com/Duon-gg/Viet2EN_Hotkey_Translator.git
-cd Viet2EN_Hotkey_Translator
+git clone https://github.com/Duon-gg/Vitra.git
+cd Vitra
 py -3.12 -m venv .venv
 .venv\Scripts\activate
 python -m pip install -r requirements.txt

@@ -29,8 +29,8 @@ Công cụ dịch Việt ↔ Anh cho Windows: bôi đen nội dung, nhấn hotke
 ## Chạy từ source
 
 ```bat
-git clone https://github.com/Duon-gg/Viet2EN_Hotkey_Translator.git
-cd Viet2EN_Hotkey_Translator
+git clone https://github.com/Duon-gg/Vitra.git
+cd Vitra
 py -3.12 -m venv .venv
 .venv\Scripts\activate
 python -m pip install -r requirements.txt
